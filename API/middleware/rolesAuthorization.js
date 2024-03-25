@@ -32,8 +32,6 @@ const checkRoleAdmin = async (req, res, next) => {
     }
 }
 
-
-
 const checkRoleNormal = async (req, res, next) => {
     let token;
     let authHeader = req.headers['authorization'];

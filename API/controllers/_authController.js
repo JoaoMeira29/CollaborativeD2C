@@ -54,7 +54,6 @@ registerUser = async (req, res) => {
     }
 }
 
-
 module.exports = {
     authUser,
     registerUser
