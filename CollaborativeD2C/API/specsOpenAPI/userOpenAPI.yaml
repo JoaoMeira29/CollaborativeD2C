@@ -1,0 +1,134 @@
+openapi: 3.0.3
+info:
+  title: User API
+  description: API endpoints for managing users
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000/collaborativeD2C/api
+    description: Local server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /listUsers:
+    get:
+      summary: Retrieve all users
+      responses:
+        '200':
+          description: A list of users
+      security:
+        - bearerAuth: [ ]
+
+  /listUser/{ID}:
+    get:
+      summary: Retrieve a single user by ID
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the user to retrieve
+      responses:
+        '200':
+          description: A single user object
+        '404':
+          description: User not found
+      security:
+        - bearerAuth: [ ]
+
+  /createUser:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the user
+                surname:
+                  type: string
+                  nullable: true
+                  description: Surname of the user
+                email:
+                  type: string
+                  description: Email of the user
+                password:
+                  type: string
+                  description: Password of the user
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Invalid request
+      security:
+        - bearerAuth: [ ]
+
+  /updateUser/{ID}:
+    put:
+      summary: Update a user by ID
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the user to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the user
+                surname:
+                  type: string
+                  nullable: true
+                  description: Surname of the user
+                status:
+                  type: string
+                  enum:
+                    - "Active"
+                    - "Inactive"
+                  description: Status of the user
+      responses:
+        '200':
+          description: User updated successfully
+        '400':
+          description: Invalid request
+        '404':
+          description: User not found
+      security:
+        - bearerAuth: [ ]
+
+  /deleteUser/{ID}:
+    delete:
+      summary: Delete a user by ID
+      parameters:
+        - in: path
+          name: ID
+          required: true
+          schema:
+            type: string
+          description: ID of the user to delete
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          description: User not found
+      security:
+        - bearerAuth: [ ]
+
