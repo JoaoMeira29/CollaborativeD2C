@@ -1,20 +1,30 @@
 'use strict'
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
+const utils = require('../utils/enums');
 
 const authUser = async ( req, res) => {
     try {
         const { email, password } = req.body;
         const user = await userService.listUserByEmail(email);
 
-        if (user?.password !== password ) {
+        if (!user || !user.lenght || user[0].password !== password ) {
             return res.status(403).json({
                 error: "Invalid Login!"
             });
         }
 
-        user.password = undefined
-        const token = jwt.sign({user}, process.env.SECRET_TOKEN );
+        if (user[0].status !== utils.userStatus.Active){
+            return res.status(403).json({
+                error: "The account of this user is Inactive."
+            });
+        }
+        delete user[0].password;
+        const token = jwt.sign({user}, process.env.SECRET_TOKEN, { expiresIn: "1hour"});
+
+        res.cookie("token", token,{
+            httpOnly: false,
+        })
 
         return res.status(200).json({Authorization: `${token}`});
     }
@@ -26,26 +36,37 @@ const authUser = async ( req, res) => {
 let registerUser;
 registerUser = async (req, res) => {
     try {
-        const { email, password, confirmPassword } = req.body;
-        const userCheckExist = await userService.listUserByEmail(email)
+        const Email = req.body.Email;
+        const Password = req.body.Password;
+        const ConfirmPassword = req.body.confirm_password;
+        const userCheckExist = await userService.listUserByEmail(Email)
 
-        if (userCheckExist?.email === email) {
-            return res.status(409).json({
-                error: "Email already in use!",
-            });
+        if (Object.keys(userCheckExist).length > 0) {
+            if (userCheckExist[0].Email === Email) {
+                return res.status(409).json({
+                    error: "Email already in use!",
+                });
+            }
         }
 
-        if (password !== confirmPassword) {
+        if (userCheckExist[0].Password) {
+            delete userCheckExist[0].Password;
+        }
+
+        if (Password !== confirmPassword) {
             return res.status(409).json({
                 error: "Confirm Password doesn't match the Password!"
             });
         }
 
         const newUserData = req.body;
-        const user = await userService.createUser(newUserData);
-        user.password = undefined;
+        await userService.createUser(newUserData);
+        const user = await userService.listUserByEmail(Email);
+        const token = jwt.sign({user}, process.env.SECRET_TOKEN, { expiresIn: "1h"});
 
-        const token = jwt.sign({user}, process.env.SECRET_TOKEN);
+        res.cookie("token", token, {
+            httpOnly: false,
+        });
 
         return res.status(200).json({Authorization: `${token}`});
     }

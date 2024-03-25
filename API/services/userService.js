@@ -26,7 +26,7 @@ const listUsersHardcoded = async () => {
         let pool = await sql.connect(config.sql);
         let query = 'Select *' +
             'From [dbo].[User]' +
-            'Where [Id] = @ID';
+            'Where [ID] = @ID';
 
         const oneUser = await pool.request()
             .input('ID', sql.Int, ID)
@@ -45,9 +45,9 @@ const listUsersHardcoded = async () => {
  * @returns {Promise<User | string>} - A promise that resolves with  the found user object
  * (with 'password' excluded) or an error message
  */
-const listUserById = async (Id) => {
+const listUserById = async (ID) => {
     try {
-        return await User.findByPk(Id, {
+        return await User.findByPk(ID, {
             attributes: { exclude: ['password'] },
         });
     } catch (error) {
@@ -63,7 +63,7 @@ const listUserById = async (Id) => {
  */
 const listUserByEmail = async (Email) => {
     try {
-        return await User.findOne(Id, {
+        return await User.findOne(ID, {
             where: { email: Email },
         });
     } catch (error) {

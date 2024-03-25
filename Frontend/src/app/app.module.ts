@@ -31,17 +31,17 @@ import { AuthService } from "./_shared/services/_Auth/auth.service";
       {path: 'editprofile', component: PagEditProfileComponent, canActivate: [AuthService]},
       {path: '**', component: PagNotFoundComponent},
     ]),
-    PagProfileComponent
+    PagProfileComponent,
+    HeaderComponent,
+    FooterComponent,
+    PagNotFoundComponent,
+    PagEditProfileComponent,
+    PagHomeComponent,
+    RegisterComponent,
+    LoginComponent
   ],
   declarations: [
-    AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    PagHomeComponent,
-    PagEditProfileComponent,
-    PagNotFoundComponent,
-    FooterComponent,
-    HeaderComponent
+    AppComponent
   ],
   providers: [],
   bootstrap: [AppComponent],
