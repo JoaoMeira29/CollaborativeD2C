@@ -79,3 +79,11 @@ ng serve
 
 **João Pedro da Costa Meira** — Student No. 23505
 Supervised by: Patrícia Leite (IPCA) | Inês Caetano & Nuno Rocha (Sistrade)
+
+## Licença
+
+Este projeto é de uso exclusivo do(s) autor(es) e/ou da instituição de ensino.
+
+© 2026 João Meira. Todos os direitos reservados.
+
+É proibida a cópia, distribuição, modificação ou utilização deste código, total ou parcial, para fins comerciais ou acadêmicos, sem autorização prévia e por escrito do autor.
