@@ -4,7 +4,7 @@
   "description": "Collaborative D2C API",
   "main": "server.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "start": "nodemon server.js"
   },
   "author": "João Meira",
@@ -23,6 +23,7 @@
     "tedious": "^18.1.0"
   },
   "devDependencies": {
+    "jest": "^30.2.0",
     "nodemon": "^3.1.0"
   }
 }
