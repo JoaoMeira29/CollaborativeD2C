@@ -139,7 +139,6 @@ This is a learning project and some parts are unfinished:
 - The `token` cookie is set without `httpOnly`, `secure` or `sameSite`.
 - CORS is open to every origin.
 - The login and register handlers still have bugs that prevent a successful end-to-end flow.
-- The frontend does not currently build (`ng build` fails): `jwt-decode` is missing from `Frontend/package.json`, and the module setup and `tsconfig.json` have not been updated for Angular 21.
 - The API URL is hardcoded in the Angular auth service.
 
 ## Author

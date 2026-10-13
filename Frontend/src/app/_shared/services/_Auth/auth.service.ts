@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import {CanActivate, Router} from "@angular/router";
-// @ts-ignore
-import decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +43,7 @@ export class AuthService implements CanActivate {
       return false;
     }
     else {
-      const tokenPayload = decode(token) as { exp: number };
+      const tokenPayload = jwtDecode<{ exp: number }>(token);
       const currentTime = Math.floor(Date.now() / 1000);
 
       if (tokenPayload.exp < currentTime) {
