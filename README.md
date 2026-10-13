@@ -1,70 +1,115 @@
 # Collaborative Direct2Consumer — Authentication Module
 
-Internship project developed at **Sistrade - Software Consulting, S.A.** as part of the Degree in Computer Systems Engineering at **IPCA - Polytechnic University of Cávado and Ave**.
+A centralized authentication module for the Collaborative Direct2Consumer (D2C) platform: an Express REST API that issues and validates JWTs, and an Angular portal that consumes it.
+
+Internship project developed at **Sistrade - Software Consulting, S.A.** as part of the Degree in Computer Systems Engineering at **IPCA - Polytechnic University of Cávado and Ave**. The full write-up is in [Report.pdf](Report.pdf).
+
+> **Status:** academic prototype, published with Sistrade's agreement. It is not production-ready — see [Known limitations](#known-limitations).
 
 ## Overview
 
-This project implements a **centralized authentication module** for the Collaborative Direct2Consumer (D2C) platform, part of a larger Textile and Clothing Industry R&D initiative.
+The D2C platform is part of a larger R&D initiative for the Textile and Clothing Industry. It brings together several external modules and services (e.g. virtual fitting room, e-commerce store, weather service), each of which would otherwise ask the user to log in again.
 
-The main goal is to eliminate repetitive authentication: once a user authenticates in the main system, they are automatically authenticated across all integrated external modules and services (e.g. virtual fitting room, e-commerce store, weather service).
+This module removes that repetition: the user authenticates once in the main system and receives a signed token that every integrated service can verify.
 
-## Tech Stack
+## How it works
+
+1. The client posts credentials to `/authLogin`.
+2. The API checks the user in SQL Server and confirms the account is `Active`.
+3. The API signs a JWT (valid for 1 hour) with `SECRET_TOKEN`, returns it in the response body and sets it as a `token` cookie.
+4. On protected routes, middleware verifies the token and checks the user's role (`Admin` or `Normal`) before the request reaches the controller.
+5. In the Angular app, a `CanActivate` guard blocks protected pages when the token is missing or expired.
+
+## Tech stack
 
 | Layer | Technology |
 |---|---|
-| Backend API | Node.js + Express.js |
-| Frontend | Angular |
-| Database | Microsoft SQL Server (via Sequelize) |
-| Authentication | JWT (JSON Web Tokens) + HTTP Cookies |
+| Backend API | Node.js, Express 4 |
+| Frontend | Angular 21, TypeScript |
+| Database | Microsoft SQL Server (Sequelize, `tedious`) |
+| Authentication | JSON Web Tokens (`jsonwebtoken`) + HTTP cookie |
+| Tests | Jest + Supertest (API), Karma + Jasmine (frontend) |
 
-## Project Structure
+## Project structure
 
 ```
 ├── API/
-│   ├── controllers/       # Auth logic (login, register)
-│   ├── middleware/        # JWT cookie verification, role authorization
-│   ├── models/            # Sequelize data models
-│   ├── routes/            # API route definitions
-│   ├── services/          # User service (DB queries)
-│   ├── utils/             # Enums and shared utilities
-│   └── specsOpenAPI/      # OpenAPI specification
-├── Frontend/              # Angular application (D2C portal)
-├── app.js
-├── config.js
-├── sequelize.js
-└── server.js
+│   ├── controllers/       # Auth (login, register) and user request handlers
+│   ├── middleware/        # JWT verification and role authorization
+│   ├── models/            # Sequelize models
+│   ├── routes/            # Route definitions
+│   ├── services/          # User queries
+│   ├── specsOpenAPI/      # OpenAPI specification
+│   ├── tests/             # Jest tests
+│   ├── utils/             # Role and status enums
+│   ├── app.js             # Express app
+│   ├── config.js          # Environment configuration
+│   ├── sequelize.js       # Database connection
+│   └── server.js          # Entry point
+├── Frontend/
+│   └── src/app/
+│       ├── _shared/       # Header, footer, 404 page, auth and user services
+│       └── features/      # Login, register, home, profile, edit profile
+└── Report.pdf             # Internship report
 ```
 
-## Features
+## API
 
-- User registration and login with JWT-based authentication
-- Token stored in HTTP cookie and validated on every protected request
-- Role-based authorization (Manager, User, etc.)
-- User status validation (Active/Inactive) on login
-- Angular route guards (`CanActivate`) to protect frontend pages
-- Centralized auth enabling seamless SSO-like access to external services
+Base URL: `/collaborativeD2C/api`
 
-## API Endpoints
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | `/authLogin` | Public | Authenticate a user and issue a token |
+| POST | `/authRegister` | Public | Register a user and issue a token |
+| GET | `/listUsers` | Admin | List all users |
+| GET | `/listUser/:ID` | Normal, Admin | Get a user by ID |
+| GET | `/listUserByEmail` | Admin | Get a user by email |
+| POST | `/createUser` | Admin | Create a user |
+| PUT | `/updateUser/:ID` | Normal, Admin | Update a user |
+| PATCH | `/updateUserStatus/:ID` | Normal, Admin | Activate or deactivate a user |
+| DELETE | `/deleteUser/:ID` | Normal, Admin | Delete a user |
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/collaborativeD2C/api/authLogin` | Authenticate a user |
-| POST | `/collaborativeD2C/api/authRegister` | Register a new user |
+Protected endpoints expect the token in the `Authorization` header:
 
-## Getting Started
+```
+Authorization: Bearer <token>
+```
+
+The user endpoints are also described in [API/specsOpenAPI/userOpenAPI.yaml](API/specsOpenAPI/userOpenAPI.yaml).
+
+## Getting started
 
 ### Prerequisites
 
-- Node.js
-- Microsoft SQL Server
-- Angular CLI
+- Node.js and npm
+- Microsoft SQL Server with a database containing a `User` table (columns: `ID`, `name`, `surname`, `email`, `password`, `status`, `role`)
+- Angular CLI (`npm install -g @angular/cli`)
 
 ### Backend
 
 ```bash
+cd API
 npm install
-# configure .env with DB credentials and SECRET_TOKEN
-node server.js
+```
+
+Create `API/.env`:
+
+```env
+PORT=3000
+HOST=localhost
+HOST_URL=http://localhost:3000
+SQL_SERVER=localhost
+SQL_DATABASE=your_database
+SQL_USER=your_user
+SQL_PASSWORD=your_password
+ENCRYPT=false
+SECRET_TOKEN=a-long-random-string
+```
+
+`PORT` and `HOST` are required. Keep `PORT=3000`, since the frontend calls the API at `http://localhost:3000`.
+
+```bash
+npm start
 ```
 
 ### Frontend
@@ -75,15 +120,36 @@ npm install
 ng serve
 ```
 
+The app is served at `http://localhost:4200`.
+
+### Tests
+
+```bash
+cd API
+npm test
+```
+
+The API tests mock the user service, so they run without a database.
+
+## Known limitations
+
+This is a learning project and some parts are unfinished:
+
+- Passwords are stored and compared in plain text; they should be hashed (e.g. bcrypt).
+- The `token` cookie is set without `httpOnly`, `secure` or `sameSite`.
+- CORS is open to every origin.
+- The login and register handlers still have bugs that prevent a successful end-to-end flow.
+- The frontend does not currently build (`ng build` fails): `jwt-decode` is missing from `Frontend/package.json`, and the module setup and `tsconfig.json` have not been updated for Angular 21.
+- The API URL is hardcoded in the Angular auth service.
+
 ## Author
 
 **João Pedro da Costa Meira** — Student No. 23505
-Supervised by: Patrícia Leite (IPCA) | Inês Caetano & Nuno Rocha (Sistrade)
 
-## Licença
+Supervised by Patrícia Leite (IPCA), Inês Caetano and Nuno Rocha (Sistrade).
 
-Este projeto é de uso exclusivo do(s) autor(es) e/ou da instituição de ensino.
+## License
 
-© 2026 João Meira. Todos os direitos reservados.
+© 2026 João Meira. All rights reserved.
 
-É proibida a cópia, distribuição, modificação ou utilização deste código, total ou parcial, para fins comerciais ou acadêmicos, sem autorização prévia e por escrito do autor.
+This project is for the exclusive use of its author(s) and/or the academic institution. Copying, distributing, modifying or using this code, in whole or in part, for commercial or academic purposes is not permitted without the author's prior written authorization.
