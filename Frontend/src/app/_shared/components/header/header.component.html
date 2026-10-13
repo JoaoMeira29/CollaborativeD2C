@@ -1,1 +1,12 @@
-<p>header works!</p>
+<header class="site-header denim">
+  <a class="wordmark" routerLink="/home">Collaborative D2C</a>
+  <nav aria-label="Account">
+    @if (auth.loggedIn()) {
+      <a [routerLink]="['/profile', auth.currentUser()?.ID]">Profile</a>
+      <button type="button" class="link-btn" (click)="auth.LogoutUser()">Sign out</button>
+    } @else {
+      <a routerLink="/login">Sign in</a>
+      <a class="btn btn--small" routerLink="/register">Create account</a>
+    }
+  </nav>
+</header>

@@ -1,1 +1,25 @@
-<p>pag-profile works!</p>
+<section class="page">
+  <h1>Your profile</h1>
+  <p class="page__intro">These are the details every service on the platform sees while you are signed in.</p>
+
+  @if (user) {
+    <div class="label tag">
+      <p class="tag__name">{{ user.name }} {{ user.surname }}</p>
+      <dl>
+        <dt>Email</dt>
+        <dd>{{ user.email }}</dd>
+        <dt>Role</dt>
+        <dd>{{ user.role }}</dd>
+        <dt>Account</dt>
+        <dd>{{ user.status }}</dd>
+        <dt>Signed in until</dt>
+        <dd>{{ sessionEnds | date:'shortTime' }}</dd>
+      </dl>
+    </div>
+
+    <div class="actions">
+      <a class="btn" routerLink="/editprofile">Edit profile</a>
+      <button type="button" class="btn btn--quiet" (click)="auth.LogoutUser()">Sign out</button>
+    </div>
+  }
+</section>

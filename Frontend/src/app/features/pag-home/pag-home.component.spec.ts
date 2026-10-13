@@ -1,3 +1,5 @@
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PagHomeComponent } from './pag-home.component';
@@ -8,7 +10,8 @@ describe('PagHomeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PagHomeComponent]
+      imports: [PagHomeComponent],
+      providers: [provideRouter([]), provideHttpClient()]
     })
     .compileComponents();
     

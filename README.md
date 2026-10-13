@@ -138,7 +138,8 @@ This is a learning project and some parts are unfinished:
 - Passwords are stored and compared in plain text; they should be hashed (e.g. bcrypt).
 - The `token` cookie is set without `httpOnly`, `secure` or `sameSite`.
 - CORS is open to every origin.
-- The login and register handlers still have bugs that prevent a successful end-to-end flow.
+- The API is covered by unit tests with a mocked database only; it has not been tested end to end against SQL Server.
+- Any signed-in user can update or delete any other user: the routes check the role, not ownership.
 - The API URL is hardcoded in the Angular auth service.
 
 ## Author

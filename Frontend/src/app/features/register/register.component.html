@@ -1,1 +1,66 @@
-<p>register works!</p>
+<div class="auth">
+  <aside class="auth__panel denim">
+    <a class="wordmark" routerLink="/home">Collaborative D2C</a>
+    <p class="auth__statement">One account for every service on the platform.</p>
+  </aside>
+
+  <div class="selvedge" aria-hidden="true"></div>
+
+  <section class="auth__form">
+    <h1>Create account</h1>
+    <p class="auth__switch">Already have one? <a routerLink="/login">Sign in</a></p>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (error()) {
+        <p class="notice" role="alert">{{ error() }}</p>
+      }
+
+      <div class="form__row">
+        <div class="field">
+          <label for="register-name">First name</label>
+          <input id="register-name" type="text" formControlName="name" autocomplete="given-name"
+                 [attr.aria-invalid]="invalid('name')" aria-describedby="register-name-error">
+          @if (invalid('name')) {
+            <p class="field__error" id="register-name-error">Enter your first name.</p>
+          }
+        </div>
+
+        <div class="field">
+          <label for="register-surname">Surname <span class="field__hint">(optional)</span></label>
+          <input id="register-surname" type="text" formControlName="surname" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="register-email">Email</label>
+        <input id="register-email" type="email" formControlName="email" autocomplete="email"
+               [attr.aria-invalid]="invalid('email')" aria-describedby="register-email-error">
+        @if (invalid('email')) {
+          <p class="field__error" id="register-email-error">Enter your email address, like name&#64;example.com.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="register-password">Password <span class="field__hint">(8 characters or more)</span></label>
+        <input id="register-password" type="password" formControlName="password" autocomplete="new-password"
+               [attr.aria-invalid]="invalid('password')" aria-describedby="register-password-error">
+        @if (invalid('password')) {
+          <p class="field__error" id="register-password-error">Choose a password with at least 8 characters.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="register-confirm">Confirm password</label>
+        <input id="register-confirm" type="password" formControlName="confirm_password" autocomplete="new-password"
+               [attr.aria-invalid]="invalid('confirm_password') || mismatch()" aria-describedby="register-confirm-error">
+        @if (invalid('confirm_password') || mismatch()) {
+          <p class="field__error" id="register-confirm-error">Type the same password again.</p>
+        }
+      </div>
+
+      <button class="btn" type="submit" [disabled]="sending()">
+        {{ sending() ? 'Creating account…' : 'Create account' }}
+      </button>
+    </form>
+  </section>
+</div>

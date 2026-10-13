@@ -1,1 +1,45 @@
-<p>pag-edit-profile works!</p>
+<section class="page">
+  <h1>Edit profile</h1>
+  <p class="page__intro">Changes show on your profile the next time you sign in.</p>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (error()) {
+      <p class="notice" role="alert">{{ error() }}</p>
+    }
+    @if (saved()) {
+      <p class="notice notice--ok" role="status">Changes saved.</p>
+    }
+
+    <div class="form__row">
+      <div class="field">
+        <label for="edit-name">First name</label>
+        <input id="edit-name" type="text" formControlName="name" autocomplete="given-name"
+               [attr.aria-invalid]="invalid('name')" aria-describedby="edit-name-error">
+        @if (invalid('name')) {
+          <p class="field__error" id="edit-name-error">Enter your first name.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="edit-surname">Surname <span class="field__hint">(optional)</span></label>
+        <input id="edit-surname" type="text" formControlName="surname" autocomplete="family-name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="edit-email">Email</label>
+      <input id="edit-email" type="email" formControlName="email" autocomplete="email"
+             [attr.aria-invalid]="invalid('email')" aria-describedby="edit-email-error">
+      @if (invalid('email')) {
+        <p class="field__error" id="edit-email-error">Enter your email address, like name&#64;example.com.</p>
+      }
+    </div>
+
+    <div class="actions">
+      <button class="btn" type="submit" [disabled]="sending()">
+        {{ sending() ? 'Saving…' : 'Save changes' }}
+      </button>
+      <a class="btn btn--quiet" [routerLink]="['/profile', user?.ID]">Back to profile</a>
+    </div>
+  </form>
+</section>

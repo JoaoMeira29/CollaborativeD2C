@@ -1,6 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import {Navigation, NavigationEnd, Router} from "@angular/router";
-import { AuthService } from "./_shared/services/_Auth/auth.service";
+import { Component, signal } from '@angular/core';
+import { NavigationEnd, Router } from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -9,23 +8,18 @@ import { AuthService } from "./_shared/services/_Auth/auth.service";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  showFooter: boolean | undefined;
-  title = 'Frontend';
+  // Login and register fill the whole screen, without header and footer
+  showChrome = signal(true);
+  title = 'Collaborative D2C';
 
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private router: Router
   ) {
-    this.showFooter = true;
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.showFooter = !(this.hasRoute('login') || this.hasRoute('register'));
+        this.showChrome.set(!(this.hasRoute('login') || this.hasRoute('register')));
       }
     });
-  }
-
-  ngOnInit() {
-    this.authService.IsUserLogged();
   }
 
   hasRoute(route: string) {

@@ -25,8 +25,11 @@ const getUserById = async (req, res) => {
 
 const getUserByEmail = async (req, res) => {
     try {
-        const userEmail = req.params.email;
+        const userEmail = req.query.email;
         const oneUser = await userService.listUserByEmail(userEmail);
+        if (oneUser) {
+            delete oneUser.password;
+        }
         res.send(oneUser);
     }
     catch (error) {
@@ -47,7 +50,7 @@ const addUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const userID = req.params.body;
+        const userID = req.params.ID;
         const data = req.body;
         const created = await userService.updateUser(userID, data);
         res.send(created);
@@ -59,7 +62,7 @@ const updateUser = async (req, res) => {
 
 const updateUserStatus = async (req, res) => {
     try {
-        const userID = req.params.body;
+        const userID = req.params.ID;
         const data = req.body;
         const created = await userService.updateUserStatus(userID, data);
         res.send(created);
@@ -71,7 +74,7 @@ const updateUserStatus = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const userID = req.params.body;
+        const userID = req.params.ID;
         const deleted = await userService.deleteUser(userID);
         res.send(deleted);
     }

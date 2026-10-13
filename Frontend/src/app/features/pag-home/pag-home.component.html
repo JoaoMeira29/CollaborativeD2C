@@ -1,1 +1,51 @@
-<p>pag-home works!</p>
+<section class="hero denim">
+  <h1>One sign-in for the fitting room, the store and the forecast.</h1>
+  <p class="hero__lede">
+    Collaborative D2C connects the services you use to choose and buy clothing.
+    Sign in once and each of them recognises you, with no second password.
+  </p>
+
+  <div class="actions">
+    @if (auth.loggedIn()) {
+      <a class="btn" [routerLink]="['/profile', auth.currentUser()?.ID]">Open your profile</a>
+    } @else {
+      <a class="btn" routerLink="/register">Create account</a>
+      <a class="btn btn--quiet" routerLink="/login">Sign in</a>
+    }
+  </div>
+
+  <ol class="route" aria-label="Services that share your sign-in">
+    <li class="label">
+      <p class="route__name">Virtual fitting room</p>
+      <p class="route__what">Try a garment on before you order it.</p>
+    </li>
+    <li class="label">
+      <p class="route__name">Online store</p>
+      <p class="route__what">Buy directly from the people who make it.</p>
+    </li>
+    <li class="label">
+      <p class="route__name">Weather service</p>
+      <p class="route__what">See what the forecast says to wear.</p>
+    </li>
+  </ol>
+</section>
+
+<div class="selvedge" aria-hidden="true"></div>
+
+<section class="steps">
+  <h2>What happens when you sign in</h2>
+  <ol>
+    <li>
+      <p class="steps__title">You enter your email and password</p>
+      <p class="steps__text">Only the main platform asks for them. No other service ever sees your password.</p>
+    </li>
+    <li>
+      <p class="steps__title">You get a session that lasts one hour</p>
+      <p class="steps__text">The platform signs it, so it cannot be altered without being noticed.</p>
+    </li>
+    <li>
+      <p class="steps__title">Each service checks that session</p>
+      <p class="steps__text">While it is valid you move between services without signing in again.</p>
+    </li>
+  </ol>
+</section>

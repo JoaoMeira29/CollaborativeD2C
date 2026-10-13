@@ -1,1 +1,41 @@
-<p>login works!</p>
+<div class="auth">
+  <aside class="auth__panel denim">
+    <a class="wordmark" routerLink="/home">Collaborative D2C</a>
+    <p class="auth__statement">Sign in here. Stay signed in everywhere else.</p>
+  </aside>
+
+  <div class="selvedge" aria-hidden="true"></div>
+
+  <section class="auth__form">
+    <h1>Sign in</h1>
+    <p class="auth__switch">New here? <a routerLink="/register">Create an account</a></p>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (error()) {
+        <p class="notice" role="alert">{{ error() }}</p>
+      }
+
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" formControlName="email" autocomplete="email"
+               [attr.aria-invalid]="invalid('email')" aria-describedby="login-email-error">
+        @if (invalid('email')) {
+          <p class="field__error" id="login-email-error">Enter your email address, like name&#64;example.com.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" formControlName="password" autocomplete="current-password"
+               [attr.aria-invalid]="invalid('password')" aria-describedby="login-password-error">
+        @if (invalid('password')) {
+          <p class="field__error" id="login-password-error">Enter your password.</p>
+        }
+      </div>
+
+      <button class="btn" type="submit" [disabled]="sending()">
+        {{ sending() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
+  </section>
+</div>

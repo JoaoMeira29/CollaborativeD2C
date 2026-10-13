@@ -1,3 +1,5 @@
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PagEditProfileComponent } from './pag-edit-profile.component';
@@ -8,7 +10,8 @@ describe('PagEditProfileComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PagEditProfileComponent]
+      imports: [PagEditProfileComponent],
+      providers: [provideRouter([]), provideHttpClient()]
     })
     .compileComponents();
     
